@@ -1,0 +1,19 @@
+#########################################
+#  _                _                  _
+# | |__   __ _  ___| | _____ _ __   __| |
+# | '_ \ / _` |/ __| |/ / _ \ '_ \ / _` |
+# | |_) | (_| | (__|   <  __/ | | | (_| |
+# |_.__/ \__,_|\___|_|\_\___|_| |_|\__,_|
+#
+#########################################
+#
+# Uncomment backend block below and edit with approriate values if you wan to store the tf state on S3
+#
+#########################################
+# terraform {
+#   backend "s3" {
+#     bucket = "some_bucket"
+#     key    = "some_key.tfstate"
+#     region = "some_region"
+#   }
+# }
