@@ -18,37 +18,21 @@ resource "volterra_securemesh_site_v2" "class_smsv2" {
     }
   )
 
-
-  // One of the arguments from this list "block_all_services blocked_services" must be set
-
   blocked_services {
     blocked_sevice {
-      // One of the arguments from this list "dns ssh web_user_interface" can be set
-
       web_user_interface = true
-
-      network_type = "network_type"
+      network_type       = "network_type"
     }
   }
 
-  // One of the arguments from this list "log_receiver log_receiver_with_net logs_streaming_disabled" must be set
-
   logs_streaming_disabled = true
 
-  // One of the arguments from this list "aws azure baremetal equinix gcp kvm nutanix oci openshift_virtualization openstack rseries vmware" must be set
-
   aws {
-    // "not_managed" must be set
-
     not_managed {}
   }
 
-  // lifecycle is a Terraform meta-argument — it controls resource behavior through
-  // settings such as ignore_changes, create_before_destroy, and prevent_destroy.
   lifecycle {
-    ignore_changes = [
-      labels
-    ]
+    ignore_changes = [labels]
   }
 }
 
