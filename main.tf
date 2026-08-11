@@ -70,14 +70,6 @@ resource "volterra_token" "class_smsv2_token" {
 
 }
 
-data "template_file" "cloud_init" {
-
-  template = file("template/cloud-config.tmpl")
-  vars = {
-    token = volterra_token.class_smsv2_token.id
-  }
-}
-
 data "http" "myip" {
   url = "http://api.ipify.org"
 }
@@ -91,16 +83,53 @@ data "http" "myip" {
 #
 # #########################################
 
-data "aws_internet_gateway" "selected" {
+data "aws_vpc" "selected" {
+  count = local.create_vpc_and_igw ? 0 : 1
+
   filter {
-    name   = "attachment.vpc-id"
-    values = [var.vpc_id]
+    name   = "tag:Name"
+    values = ["class-smsv2-vpc"]
   }
 }
 
+data "aws_internet_gateway" "selected" {
+  count = local.create_vpc_and_igw ? 0 : 1
+
+  filter {
+    name   = "attachment.vpc-id"
+    values = [data.aws_vpc.selected[0].id]
+  }
+}
+
+resource "aws_vpc" "class_smsv2" {
+  count = local.create_vpc_and_igw ? 1 : 0
+
+  cidr_block           = "10.255.0.0/16"
+  enable_dns_hostnames = true
+
+  tags = merge(local.vpc_tags, local.common_tags)
+
+}
+
+resource "aws_internet_gateway" "class_smsv2" {
+  count = local.create_vpc_and_igw ? 1 : 0
+
+  vpc_id = local.vpc_id
+
+  tags = merge(local.igw_tags, local.common_tags)
+
+}
+
+# data "aws_internet_gateway" "selected" {
+#   filter {
+#     name   = "attachment.vpc-id"
+#     values = [var.vpc_id]
+#   }
+# }
+
 resource "aws_subnet" "class_smsv2" {
   cidr_block              = "10.255.${var.student_no}.0/24"
-  vpc_id                  = var.vpc_id
+  vpc_id                  = local.vpc_id
   map_public_ip_on_launch = false
   availability_zone       = local.availability_zone
 
@@ -110,11 +139,11 @@ resource "aws_subnet" "class_smsv2" {
 
 # ROUTING #
 resource "aws_route_table" "class_smsv2" {
-  vpc_id = var.vpc_id
+  vpc_id = local.vpc_id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = data.aws_internet_gateway.selected.id
+    gateway_id = local.igw_id
   }
 
   tags = merge(local.igw_rt_tags, local.common_tags)
@@ -129,7 +158,7 @@ resource "aws_route_table_association" "class_smsv2" {
 # # SECURITY GROUPS #
 resource "aws_security_group" "class_smsv2" {
   name   = "class_smsv2_${local.student_name}_sg"
-  vpc_id = var.vpc_id
+  vpc_id = local.vpc_id
 
   tags = merge(local.sg_tags, local.common_tags)
 
@@ -187,7 +216,7 @@ resource "aws_vpc_security_group_egress_rule" "class_smsv2_egress_rule_1" {
 }
 
 resource "aws_default_security_group" "default" {
-  vpc_id = var.vpc_id
+  vpc_id = local.vpc_id
 }
 
 resource "aws_eip" "class_smsv2" {
@@ -198,7 +227,7 @@ resource "aws_eip" "class_smsv2" {
   tags = merge(
     local.common_tags,
     {
-      Name = "class_smsv2_${local.student_name}_eip"
+      Name = "${local.course_name}-${local.student_name}-eip"
     }
   )
 }
@@ -239,7 +268,7 @@ resource "aws_instance" "class_smsv2" {
   subnet_id              = aws_subnet.class_smsv2.id
   vpc_security_group_ids = [aws_security_group.class_smsv2.id]
   key_name               = aws_key_pair.class_smsv2.key_name
-  user_data              = data.template_file.cloud_init.rendered
+  user_data              = templatefile(local.templatefile, local.template_var)
 
   root_block_device {
     volume_size           = 80    # size in GB
@@ -250,7 +279,7 @@ resource "aws_instance" "class_smsv2" {
   tags = merge(
     local.common_tags,
     {
-      Name             = "${local.student_name}-ec2",
+      Name             = "${local.course_name}-${local.student_name}-ec2",
       ves-io-site-name = volterra_securemesh_site_v2.class_smsv2.name
     }
   )

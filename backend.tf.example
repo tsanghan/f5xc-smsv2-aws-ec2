@@ -7,7 +7,7 @@
 #
 #########################################
 #
-# Uncomment backend block below and edit with approriate values if you wan to store the tf state on S3
+# Uncomment backend block below and edit with approriate values if you want to store the tf state on S3
 #
 #########################################
 # terraform {

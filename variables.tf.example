@@ -7,6 +7,11 @@ variable "student_no" {
   default = "1"
 }
 
+variable "region" {
+  type    = string
+  default = "us-east-1"
+}
+
 variable "public_key" {
   type    = string
   default = "<your_ssh_public_key>"
@@ -14,15 +19,10 @@ variable "public_key" {
 
 variable "key_name" {
   type    = string
-  default = "class_smsv2"
+  default = "f5xc-admin-smsv2"
 }
 
 variable "extra_cidrs" {
-  type    = string
-  default = null
-}
-
-variable "vpc_id" {
   type    = string
   default = null
 }
