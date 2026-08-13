@@ -22,7 +22,7 @@ clean:
     while IFS= read -r -d '' f; do
         files_to_remove+=("$f")
     done < <(find . -type f -regextype posix-extended \
-                -regex '.*\.(hcl|tfstate|backup)|\.?plan$' -print0)
+                -regex '.*\.(hcl|tfstate|backup)|.*\.?plan$' -print0)
 
     if [[ ${#files_to_remove[@]} -gt 0 ]]; then
         echo "Found ${#files_to_remove[@]} file(s) to delete:"

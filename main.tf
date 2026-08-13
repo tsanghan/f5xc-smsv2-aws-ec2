@@ -7,8 +7,7 @@
 #
 ##########################################
 
-resource "volterra_securemesh_site_v2" "class_smsv2" {
-
+resource "volterra_securemesh_site_v2" "this" {
   name      = "${local.student_name}-smsv2"
   namespace = "system"
   labels = merge(
@@ -40,22 +39,16 @@ resource "time_sleep" "wait" {
   create_duration  = "5s"
   destroy_duration = "5s"
 
-  depends_on = [volterra_securemesh_site_v2.class_smsv2]
+  depends_on = [volterra_securemesh_site_v2.this]
 }
 
-resource "volterra_token" "class_smsv2_token" {
-
+resource "volterra_token" "token" {
   name      = "${local.student_name}-smsv2"
   namespace = "system"
   type      = 1
   site_name = "${local.student_name}-smsv2"
 
-  depends_on = [volterra_securemesh_site_v2.class_smsv2, time_sleep.wait]
-
-}
-
-data "http" "myip" {
-  url = "http://api.ipify.org"
+  depends_on = [volterra_securemesh_site_v2.this, time_sleep.wait]
 }
 
 # #########################################
@@ -67,146 +60,121 @@ data "http" "myip" {
 #
 # #########################################
 
-data "aws_vpc" "selected" {
-  count = local.create_vpc_and_igw ? 0 : 1
-
-  filter {
-    name   = "tag:Name"
-    values = ["class-smsv2-vpc"]
-  }
+data "http" "myip" {
+  url = "http://api.ipify.org"
 }
 
-data "aws_internet_gateway" "selected" {
-  count = local.create_vpc_and_igw ? 0 : 1
-
-  filter {
-    name   = "attachment.vpc-id"
-    values = [data.aws_vpc.selected[0].id]
-  }
-}
-
-resource "aws_vpc" "class_smsv2" {
-  count = local.create_vpc_and_igw ? 1 : 0
-
-  cidr_block           = "10.255.0.0/16"
+resource "aws_vpc" "this" {
+  cidr_block           = local.vpc_cidr
   enable_dns_hostnames = true
 
   tags = merge(local.vpc_tags, local.common_tags)
-
 }
 
-resource "aws_internet_gateway" "class_smsv2" {
-  count = local.create_vpc_and_igw ? 1 : 0
-
-  vpc_id = local.vpc_id
+resource "aws_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
 
   tags = merge(local.igw_tags, local.common_tags)
-
 }
 
-# data "aws_internet_gateway" "selected" {
-#   filter {
-#     name   = "attachment.vpc-id"
-#     values = [var.vpc_id]
-#   }
-# }
+resource "aws_subnet" "this" {
+  for_each = local.subnets
 
-resource "aws_subnet" "class_smsv2" {
-  cidr_block              = "10.255.${var.student_no}.0/24"
-  vpc_id                  = local.vpc_id
-  map_public_ip_on_launch = false
-  availability_zone       = local.availability_zone
+  cidr_block                      = each.value.cidr_block
+  vpc_id                          = aws_vpc.this.id
+  map_public_ip_on_launch         = false
+  availability_zone               = local.availability_zone
+  assign_ipv6_address_on_creation = false
 
-  tags = merge(local.smsv2_slo_sub_tags, local.common_tags)
-
+  tags = merge(each.value.tags, local.common_tags)
 }
 
 # ROUTING #
-resource "aws_route_table" "class_smsv2" {
-  vpc_id = local.vpc_id
+resource "aws_route_table" "this" {
+  for_each = local.route_tables
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = local.igw_id
-  }
+  vpc_id = aws_vpc.this.id
 
-  tags = merge(local.igw_rt_tags, local.common_tags)
-
+  tags = merge(each.value.tags, local.common_tags)
 }
 
-resource "aws_route_table_association" "class_smsv2" {
-  subnet_id      = aws_subnet.class_smsv2.id
-  route_table_id = aws_route_table.class_smsv2.id
+resource "aws_route" "this" {
+  for_each = local.flattened_routes
+
+  route_table_id         = each.value.route_table_id
+  destination_cidr_block = each.value.destination_cidr_block
+  gateway_id             = each.value.gateway_id
+}
+
+resource "aws_route_table_association" "this" {
+  for_each = local.subnets
+
+  subnet_id      = aws_subnet.this[each.key].id
+  route_table_id = aws_route_table.this[each.key].id
 }
 
 # # SECURITY GROUPS #
-resource "aws_security_group" "class_smsv2" {
-  name   = "class_smsv2_${local.student_name}_sg"
-  vpc_id = local.vpc_id
+resource "aws_security_group" "slo" {
+  name   = "${local.course_name}-${local.student_name}-slo-sg"
+  vpc_id = aws_vpc.this.id
 
-  tags = merge(local.sg_tags, local.common_tags)
-
+  tags = merge(local.sg_slo_tags, local.common_tags)
 }
 
-resource "aws_vpc_security_group_ingress_rule" "class_smsv2_ingress_rule_1" {
-  for_each = toset(
-    concat(
-      ["${data.http.myip.response_body}/32"],
-      local.extra_cidrs_list
-    )
-  )
+resource "aws_vpc_security_group_ingress_rule" "slo_ingress_rules" {
+  for_each = local.slo_ingress_security_group_rules
 
-  security_group_id = aws_security_group.class_smsv2.id
-  ip_protocol       = "icmp"
-  from_port         = -1
-  to_port           = -1
-  cidr_ipv4         = each.key
+  security_group_id = aws_security_group.slo.id
+  ip_protocol       = each.value.ip_protocol
+  from_port         = each.value.from_port
+  to_port           = each.value.to_port
+  cidr_ipv4         = each.value.cidr_ipv4
 }
 
-resource "aws_vpc_security_group_ingress_rule" "class_smsv2_ingress_rule_2" {
-  for_each = toset(
-    concat(
-      ["${data.http.myip.response_body}/32"],
-      local.extra_cidrs_list
-    )
-  )
-
-  security_group_id = aws_security_group.class_smsv2.id
-  ip_protocol       = "tcp"
-  from_port         = 22
-  to_port           = 22
-  cidr_ipv4         = each.key
-}
-
-resource "aws_vpc_security_group_ingress_rule" "class_smsv2_ingress_rule_3" {
-  for_each = toset(
-    concat(
-      ["${data.http.myip.response_body}/32"],
-      local.extra_cidrs_list
-    )
-  )
-
-  security_group_id = aws_security_group.class_smsv2.id
-  ip_protocol       = "tcp"
-  from_port         = 65500
-  to_port           = 65500
-  cidr_ipv4         = each.key
-}
-
-resource "aws_vpc_security_group_egress_rule" "class_smsv2_egress_rule_1" {
-  security_group_id = aws_security_group.class_smsv2.id
+resource "aws_vpc_security_group_egress_rule" "slo_egress_rule_1" {
+  security_group_id = aws_security_group.slo.id
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-resource "aws_default_security_group" "default" {
-  vpc_id = local.vpc_id
+resource "aws_security_group" "sli" {
+  name   = "${local.course_name}-${local.student_name}-sli-sg"
+  vpc_id = aws_vpc.this.id
+
+  tags = merge(local.sg_sli_tags, local.common_tags)
 }
 
-resource "aws_eip" "class_smsv2" {
+resource "aws_vpc_security_group_ingress_rule" "sli_ingress_rule_1" {
+  security_group_id = aws_security_group.sli.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = local.subnets_info[1].cidr_block
+}
 
-  instance = aws_instance.class_smsv2.id
-  domain   = "vpc"
+resource "aws_vpc_security_group_egress_rule" "sli_egress_rule_1" {
+  security_group_id = aws_security_group.sli.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = local.subnets_info[1].cidr_block
+}
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.this.id
+}
+
+resource "aws_network_interface" "this" {
+  for_each = local.enis
+
+  subnet_id       = aws_subnet.this[each.value.subnet_key].id
+  security_groups = each.value.subnet_key == 0 ? [aws_security_group.slo.id] : [aws_security_group.sli.id]
+  description     = each.value.description
+
+  tags = merge(local.common_tags, {
+    Name = "${local.course_name}-${local.student_name}-${each.key}"
+  })
+}
+
+resource "aws_eip" "this" {
+  domain            = "vpc"
+  network_interface = aws_network_interface.this["eni0"].id
 
   tags = merge(
     local.common_tags,
@@ -214,6 +182,8 @@ resource "aws_eip" "class_smsv2" {
       Name = "${local.course_name}-${local.student_name}-eip"
     }
   )
+
+  depends_on = [aws_instance.this]
 }
 
 # ##########################################
@@ -237,7 +207,7 @@ data "aws_ssm_parameter" "ami" {
 # # RESOURCES
 # ##################################################################################
 
-resource "aws_key_pair" "class_smsv2" {
+resource "aws_key_pair" "this" {
   key_name   = var.key_name
   public_key = var.public_key
 
@@ -245,26 +215,34 @@ resource "aws_key_pair" "class_smsv2" {
 }
 
 # # # INSTANCES #
-resource "aws_instance" "class_smsv2" {
-
-  ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
-  instance_type          = local.instance_type
-  subnet_id              = aws_subnet.class_smsv2.id
-  vpc_security_group_ids = [aws_security_group.class_smsv2.id]
-  key_name               = aws_key_pair.class_smsv2.key_name
-  user_data              = templatefile(local.templatefile, local.template_var)
+resource "aws_instance" "this" {
+  ami           = nonsensitive(data.aws_ssm_parameter.ami.value)
+  instance_type = local.instance_type
+  key_name      = aws_key_pair.this.key_name
+  user_data     = templatefile(local.templatefile, local.template_var)
 
   root_block_device {
-    volume_size           = 80    # size in GB
-    volume_type           = "gp2" # general‑purpose SSD; change to gp3, io1, etc. if desired
+    volume_size           = 80
+    volume_type           = "gp2"
     delete_on_termination = true
+  }
+
+  primary_network_interface {
+    network_interface_id = aws_network_interface.this["eni0"].id
   }
 
   tags = merge(
     local.common_tags,
     {
       Name             = "${local.course_name}-${local.student_name}-ec2",
-      ves-io-site-name = volterra_securemesh_site_v2.class_smsv2.name
+      ves-io-site-name = volterra_securemesh_site_v2.this.name
     }
   )
+}
+
+resource "aws_network_interface_attachment" "secondary_attach" {
+  instance_id          = aws_instance.this.id
+  network_interface_id = aws_network_interface.this["eni1"].id
+  device_index         = 1
+
 }
