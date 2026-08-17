@@ -32,7 +32,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: create backend.tf
+    - name: create backend.tf & variables.tf
       run: |
         cat <<EOF > backend.tf
         terraform {
@@ -43,6 +43,7 @@ jobs:
           }
         }
         EOF
+        sed s/<your_ssh_public_key>/null/ <variables.tf.examples >variables.tf
 
     - uses: opentofu/setup-opentofu@v1
       with:

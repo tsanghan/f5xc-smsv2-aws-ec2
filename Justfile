@@ -49,6 +49,7 @@ gh-set-secreats:
     gh secret set AWS_SECRET_ACCESS_KEY --body "$AWS_SECRET_ACCESS_KEY"
     gh secret set AWS_SESSION_TOKEN --body "$AWS_SESSION_TOKEN"
     gh secret set TF_VAR_extra_cidrs --body "$TF_VAR_extra_cidrs"
+    gh secret set TF_VAR_public_key --body "$TF_VAR_public_key"
     gh secret set BACKEND_BUCEKT_NAME --body "$BACKEND_BUCEKT_NAME"
     gh secret set BACKEND_BUCKET_KEY --body "$BACKEND_BUCKET_KEY"
     gh secret set BACKEND_BUCKET_REGION --body "$BACKEND_BUCKET_REGION"
