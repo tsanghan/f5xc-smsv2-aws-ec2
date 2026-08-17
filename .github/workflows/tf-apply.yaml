@@ -19,6 +19,8 @@ jobs:
     needs: Pre-Deploy
     runs-on: ubuntu-latest
     env:
+      VES_P12_PASSWORD: ${{ secrets.VES_P12_PASSWORD }}
+      VES_P12_CONTENT: ${{ secrets.VES_P12_CONTENT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
