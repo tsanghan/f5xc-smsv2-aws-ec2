@@ -25,7 +25,7 @@ jobs:
       TF_VAR_in_gihub_action: true
       BACKEND_BUCEKT_NAME: ${{ secrets.BACKEND_BUCEKT_NAME }}
       BACKEND_BUCKET_KEY: ${{ secrets.BACKEND_BUCKET_KEY }}
-      BACKEND_BUCKET_REGION: ${{ secrets.BACKEND_BUCKET_KEY }}
+      BACKEND_BUCKET_REGION: ${{ secrets.BACKEND_BUCKET_REGION }}
 
     steps:
     - name: Checkout
@@ -38,7 +38,7 @@ jobs:
             backend "s3" {
               bucket = "$BACKEND_BUCEKT_NAME"
               key    = "$BACKEND_BUCKET_KEY"
-              region = "$BACKEND_BUCKET_KEY"
+              region = "$BACKEND_BUCKET_REGION"
             }
           }
         EOF
