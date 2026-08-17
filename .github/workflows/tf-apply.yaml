@@ -43,7 +43,7 @@ jobs:
           }
         }
         EOF
-        sed 's/<your_ssh_public_key>/null/' <variables.tf.examples >variables.tf
+        sed 's/<your_ssh_public_key>/null/' <variables.tf.example >variables.tf
 
     - uses: opentofu/setup-opentofu@v1
       with:
