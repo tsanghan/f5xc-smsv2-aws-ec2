@@ -47,7 +47,6 @@ terraform.rc
 
 .envrc
 backend.tf
-variables.tf
 *example.tf
 *.p12
 *.hcl
