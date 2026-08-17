@@ -26,3 +26,8 @@ variable "extra_cidrs" {
   type    = string
   default = null
 }
+
+variable "in_github_action" {
+  type    = bool
+  default = false
+}

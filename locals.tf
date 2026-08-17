@@ -16,9 +16,11 @@ locals {
 
   extra_cidrs_list = var.extra_cidrs != null ? split(",", var.extra_cidrs) : []
 
-  final_cidrs_set = toset(concat(["${data.http.myip.response_body}/32"], local.extra_cidrs_list))
+  local_cidr = var.in_github_action ? [] : ["${data.http.myip.response_body}/32"]
 
-  number_of_subnets = 2
+  final_cidrs_set = toset(concat(local.local_cidr, local.extra_cidrs_list))
+
+  # number_of_subnets = 2
 
   instance_type = "m5.2xlarge"
 

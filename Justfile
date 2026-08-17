@@ -40,3 +40,16 @@ generate-tofu:
     sed 's/1.15.8/1.12.5/' <providers.tf | tee providers.tofu
     sed 's/Terraform/OpenTofu/' <locals.tf | tee locals.tofu
     sed 's/"ssh-.*"/"<your_ssh_public_key>"/' <variables.tf | tee variables.tf.example
+
+gh-set-secreats:
+    #!/usr/bin/env bash
+    gh secret set VES_P12_PASSWORD --body "$VES_P12_PASSWORD"
+    gh secret set VES_P12_CONTENT --body "$VES_P12_CONTENT"
+    gh secret set AWS_ACCESS_KEY_ID --body "$AWS_ACCESS_KEY_ID"
+    gh secret set AWS_SECRET_ACCESS_KEY --body "$AWS_SECRET_ACCESS_KEY"
+    gh secret set AWS_SESSION_TOKEN --body "$AWS_SESSION_TOKEN"
+    gh secret set TF_VAR_extra_cidrs --body "$TF_VAR_extra_cidrs"
+    gh secret set BACKEND_BUCEKT_NAME --body "$BACKEND_BUCEKT_NAME"
+    gh secret set BACKEND_BUCKET_KEY --body "$BACKEND_BUCKET_KEY"
+    gh secret set BACKEND_BUCKET_REGION --body "$BACKEND_BUCKET_REGION"
+    gh secret list
