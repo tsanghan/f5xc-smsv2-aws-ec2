@@ -121,6 +121,13 @@ resource "aws_security_group" "slo" {
   tags = merge(local.sg_slo_tags, local.common_tags)
 }
 
+resource "aws_security_group" "sli" {
+  name   = "${local.course_name}-${local.student_name}-sli-sg"
+  vpc_id = aws_vpc.this.id
+
+  tags = merge(local.sg_sli_tags, local.common_tags)
+}
+
 resource "aws_vpc_security_group_ingress_rule" "slo_ingress_rules" {
   for_each = local.slo_ingress_security_group_rules
 
@@ -135,13 +142,6 @@ resource "aws_vpc_security_group_egress_rule" "slo_egress_rule_1" {
   security_group_id = aws_security_group.slo.id
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
-}
-
-resource "aws_security_group" "sli" {
-  name   = "${local.course_name}-${local.student_name}-sli-sg"
-  vpc_id = aws_vpc.this.id
-
-  tags = merge(local.sg_sli_tags, local.common_tags)
 }
 
 resource "aws_vpc_security_group_ingress_rule" "sli_ingress_rule_1" {
