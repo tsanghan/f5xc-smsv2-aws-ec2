@@ -65,6 +65,11 @@ jobs:
     - name: Tofu Plan
       id: plab
       run: tofu plan
+      continue-on-error: true
+
+    - name: Tofu Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
 
     - name: Tofu Apply
       run: tofu apply -auto-approve
