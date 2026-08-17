@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 jobs:
-  pre-deploy:
+  Pre-Deploy:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was triggered by a ${{ github.event_name }} event"
@@ -16,6 +16,7 @@ jobs:
 
   deploy:
     name: Deploy
+    needs: Pre-Deploy
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
