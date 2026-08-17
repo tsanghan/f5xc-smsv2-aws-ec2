@@ -13,8 +13,7 @@ variable "region" {
 }
 
 variable "public_key" {
-  type    = string
-  default = "<your_ssh_public_key>"
+  type = string
 }
 
 variable "key_name" {

@@ -25,6 +25,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       TF_VAR_extra_cidrs: ${{ secrets.TF_VAR_extra_cidrs }}
+      TF_VAR_public_key: ${{ secrets.TF_VAR_public_key }}
       TF_VAR_in_gihub_action: true
       BACKEND_BUCEKT_NAME: ${{ secrets.BACKEND_BUCEKT_NAME }}
       BACKEND_BUCKET_KEY: ${{ secrets.BACKEND_BUCKET_KEY }}

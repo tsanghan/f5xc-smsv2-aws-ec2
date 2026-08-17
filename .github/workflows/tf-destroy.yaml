@@ -6,10 +6,13 @@ jobs:
   Destroy:
     runs-on: ubuntu-latest
     env:
+      VES_P12_PASSWORD: ${{ secrets.VES_P12_PASSWORD }}
+      VES_P12_CONTENT: ${{ secrets.VES_P12_CONTENT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       TF_VAR_extra_cidrs: ${{ secrets.TF_VAR_extra_cidrs }}
+      TF_VAR_public_key: ${{ secrets.TF_VAR_public_key }}
       TF_VAR_in_gihub_action: true
       BACKEND_BUCEKT_NAME: ${{ secrets.BACKEND_BUCEKT_NAME }}
       BACKEND_BUCKET_KEY: ${{ secrets.BACKEND_BUCKET_KEY }}
@@ -30,6 +33,7 @@ jobs:
             }
           }
         EOF
+        sed '/default = <your_ssh_public_key>/d' <variables.tf.example >variables.tf
 
     - uses: opentofu/setup-opentofu@v1
       with:
@@ -46,3 +50,4 @@ jobs:
     - name: Tofu Destroy
       id: destroy
       run: tofu destroy -auto-approve
+      continue-on-error: true
