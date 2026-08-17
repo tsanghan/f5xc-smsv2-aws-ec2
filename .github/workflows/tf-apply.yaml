@@ -35,13 +35,13 @@ jobs:
     - name: create backend.tf
       run: |
         cat <<EOF > backend.tf
-          terraform {
-            backend "s3" {
-              bucket = "$BACKEND_BUCEKT_NAME"
-              key    = "$BACKEND_BUCKET_KEY"
-              region = "$BACKEND_BUCKET_REGION"
-            }
+        terraform {
+          backend "s3" {
+            bucket = "$BACKEND_BUCEKT_NAME"
+            key    = "$BACKEND_BUCKET_KEY"
+            region = "$BACKEND_BUCKET_REGION"
           }
+        }
         EOF
 
     - uses: opentofu/setup-opentofu@v1
