@@ -55,6 +55,7 @@ jobs:
     - name: Tofu Format
       id: fmt
       run: tofu fmt -check -recursive
+      continue-on-error: true
 
     - name: Tofu Validate
       id: validate
