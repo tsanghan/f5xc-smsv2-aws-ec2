@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: create backend.tf
       run: |
@@ -34,7 +34,7 @@ jobs:
           }
         EOF
 
-    - uses: opentofu/setup-opentofu@v1
+    - uses: opentofu/setup-opentofu@v2
       with:
         tofu_version: 1.12.5
 
