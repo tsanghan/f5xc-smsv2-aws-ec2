@@ -43,14 +43,28 @@ generate-tofu:
 
 gh-set-secreats:
     #!/usr/bin/env bash
-    gh secret set VES_P12_PASSWORD --body "$VES_P12_PASSWORD"
-    gh secret set VES_P12_CONTENT --body "$VES_P12_CONTENT"
-    gh secret set AWS_ACCESS_KEY_ID --body "$AWS_ACCESS_KEY_ID"
-    gh secret set AWS_SECRET_ACCESS_KEY --body "$AWS_SECRET_ACCESS_KEY"
-    gh secret set AWS_SESSION_TOKEN --body "$AWS_SESSION_TOKEN"
-    gh secret set TF_VAR_extra_cidrs --body "$TF_VAR_extra_cidrs"
-    gh secret set TF_VAR_public_key --body "$TF_VAR_public_key"
-    gh secret set BACKEND_BUCEKT_NAME --body "$BACKEND_BUCEKT_NAME"
-    gh secret set BACKEND_BUCKET_KEY --body "$BACKEND_BUCKET_KEY"
-    gh secret set BACKEND_BUCKET_REGION --body "$BACKEND_BUCKET_REGION"
+    # slow
+    # gh secret set VES_P12_PASSWORD --body "$VES_P12_PASSWORD"
+    # gh secret set VES_P12_CONTENT --body "$VES_P12_CONTENT"
+    # gh secret set AWS_ACCESS_KEY_ID --body "$AWS_ACCESS_KEY_ID"
+    # gh secret set AWS_SECRET_ACCESS_KEY --body "$AWS_SECRET_ACCESS_KEY"
+    # gh secret set AWS_SESSION_TOKEN --body "$AWS_SESSION_TOKEN"
+    # gh secret set TF_VAR_extra_cidrs --body "$TF_VAR_extra_cidrs"
+    # gh secret set TF_VAR_public_key --body "$TF_VAR_public_key"
+    # gh secret set BACKEND_BUCEKT_NAME --body "$BACKEND_BUCEKT_NAME"
+    # gh secret set BACKEND_BUCKET_KEY --body "$BACKEND_BUCKET_KEY"
+    # gh secret set BACKEND_BUCKET_REGION --body "$BACKEND_BUCKET_REGION"
+    # FAST!!
+    cat <<EOF | gh secret set -f /dev/stdin
+    VES_P12_PASSWORD="$VES_P12_PASSWORD"
+    VES_P12_CONTENT="$VES_P12_CONTENT"
+    AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
+    AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+    AWS_SESSION_TOKEN="$AWS_SESSION_TOKEN"
+    TF_VAR_extra_cidrs="$TF_VAR_extra_cidrs"
+    TF_VAR_public_key="$TF_VAR_public_key"
+    BACKEND_BUCEKT_NAME="$BACKEND_BUCEKT_NAME"
+    BACKEND_BUCKET_KEY="$BACKEND_BUCKET_KEY"
+    BACKEND_BUCKET_REGION="$BACKEND_BUCKET_REGION"
+    EOF
     gh secret list
