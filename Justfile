@@ -55,7 +55,7 @@ gh-set-secreats:
     # gh secret set BACKEND_BUCKET_KEY --body "$BACKEND_BUCKET_KEY"
     # gh secret set BACKEND_BUCKET_REGION --body "$BACKEND_BUCKET_REGION"
     # FAST!!
-    cat <<EOF | gh secret set -f /dev/stdin
+    cat <<EOF | gh secret set -f -
     VES_P12_PASSWORD="$VES_P12_PASSWORD"
     VES_P12_CONTENT="$VES_P12_CONTENT"
     AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
