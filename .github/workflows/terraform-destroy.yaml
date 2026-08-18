@@ -1,0 +1,52 @@
+name: Terraform Destroy
+on:
+ workflow_dispatch:
+
+jobs:
+  Destroy:
+    runs-on: ubuntu-latest
+    env:
+      VES_P12_PASSWORD: ${{ secrets.VES_P12_PASSWORD }}
+      VES_P12_CONTENT: ${{ secrets.VES_P12_CONTENT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      TF_VAR_extra_cidrs: ${{ secrets.TF_VAR_extra_cidrs }}
+      TF_VAR_public_key: ${{ secrets.TF_VAR_public_key }}
+      TF_VAR_in_github_action: true
+      BACKEND_BUCEKT_NAME: ${{ secrets.BACKEND_BUCEKT_NAME }}
+      BACKEND_BUCKET_KEY: ${{ secrets.BACKEND_BUCKET_KEY }}
+      BACKEND_BUCKET_REGION: ${{ secrets.BACKEND_BUCKET_REGION }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: create backend.tf
+      run: |
+        cat <<EOF > backend.tf
+          terraform {
+            backend "s3" {
+              bucket = "$BACKEND_BUCEKT_NAME"
+              key    = "$BACKEND_BUCKET_KEY"
+              region = "$BACKEND_BUCKET_REGION"
+            }
+          }
+        EOF
+
+    - uses: hashicorp/setup-terraform@v4
+      with:
+        terraform_version: 1.15.8
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+
+    - name: Terraform Plan -Destroy
+      run: terraform plan -destroy
+      continue-on-error: true
+
+    - name: Terraform Destroy
+      id: destroy
+      run: terraform destroy -auto-approve
+      continue-on-error: true
