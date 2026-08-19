@@ -42,9 +42,9 @@ jobs:
       id: init
       run: tofu init
 
-    - name: Tofu Plan -Destroy
-      run: tofu plan -destroy
-      continue-on-error: true
+    # - name: Tofu Plan -Destroy
+    #   run: tofu plan -destroy
+    #   continue-on-error: true
 
     - name: Tofu Destroy
       id: destroy
