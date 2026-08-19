@@ -26,7 +26,7 @@ locals {
 
   course_name = "f5xc-admin-smsv2"
 
-  templatefile = "template/cloud-config.tmpl"
+  templatefile = "templates/cloud-config.tmpl"
 
   template_var = { token = volterra_token.token.id }
 

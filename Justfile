@@ -37,7 +37,8 @@ clean:
 
 generate-tofu:
     #!/usr/bin/env bash
-    sed 's/1.15.8/1.12.5/' <providers.tf | tee providers.tofu
+    sed "s/VERSION/$TERRAFORM_VER/" <templates/providers.tf.tmpl | tee providers.tf
+    sed "s/VERSION/$OPENTOFU_VER/" <templates/providers.tf.tmpl | tee providers.tofu
     sed 's/Terraform/OpenTofu/' <locals.tf | tee locals.tofu
     sed 's/"ssh-.*"/"<your_ssh_public_key>"/' <variables.tf | tee variables.tf.example
 

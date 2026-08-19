@@ -2,11 +2,11 @@
 # PROVIDERS
 ##################################################################################
 terraform {
-  required_version = ">= 1.15.8"
+  required_version = ">= 1.15.9"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.56.0, < 7.0.0"
+      version = ">= 6.60.0, < 7.0.0"
     }
     volterra = {
       source  = "volterraedge/volterra"
@@ -14,7 +14,7 @@ terraform {
     }
     http = {
       source  = "hashicorp/http"
-      version = ">= 3.6.0, < 4.0.0"
+      version = ">= 3.6.1, < 4.0.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -26,7 +26,7 @@ terraform {
     }
     time = {
       source  = "hashicorp/time"
-      version = ">= 0.14.0, < 1.0.0"
+      version = ">= 0.14.1, < 1.0.0"
     }
   }
 }
