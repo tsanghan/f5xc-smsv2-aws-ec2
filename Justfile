@@ -6,8 +6,6 @@ default:
 
 check:
     terraform fmt
-    - diff variables.tf{,.example}
-    echo
     - diff locals.{tf,tofu}
     echo
     - diff providers.{tf,tofu}
