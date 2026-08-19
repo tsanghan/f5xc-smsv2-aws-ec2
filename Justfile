@@ -67,4 +67,9 @@ gh-set-secreats:
     BACKEND_BUCKET_KEY="$BACKEND_BUCKET_KEY"
     BACKEND_BUCKET_REGION="$BACKEND_BUCKET_REGION"
     EOF
+    cat <<EOF | gh variable set -f -
+    OPENTOFU_VER="$OPENTOFU_VER"
+    TERRAFORM_VER="$TERRAFORM_VER"
+    EOF
     gh secret list
+    gh variable list

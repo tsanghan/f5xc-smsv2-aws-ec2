@@ -1,4 +1,8 @@
 # f5xc-smsv2-aws-ec2
+![terraform apply workflow](https://github.com/tsanghan/f5xc-smsv2-aws-ec2/actions/workflows/terraform-apply.yaml/badge.svg)
+![terraform destroy workflow](https://github.com/tsanghan/f5xc-smsv2-aws-ec2/actions/workflows/terraform-destroy.yaml/badge.svg)
+![tofu apply workflow](https://github.com/tsanghan/f5xc-smsv2-aws-ec2/actions/workflows/tofu-apply.yaml/badge.svg)
+![tofu destroy workflow](https://github.com/tsanghan/f5xc-smsv2-aws-ec2/actions/workflows/tofu-destroy.yaml/badge.svg)
 
 1) Copy `.env.example` to `.env`
 2) Copy `variables.tf.example` to `variables.tf`
