@@ -72,3 +72,8 @@ gh-set-secreats:
     EOF
     gh secret list
     gh variable list
+
+gh-pr message:
+    #!/usr/bin/env bash
+    gh pr create --base main --head test --title "{{message}}" --body "{{message}}"
+
