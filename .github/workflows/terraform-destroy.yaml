@@ -36,7 +36,7 @@ jobs:
 
     - uses: hashicorp/setup-terraform@v4
       with:
-        terraform_version: 1.15.8
+        terraform_version: ${{ vars.TERRAFORM_VER }}
 
     - name: Terraform Init
       id: init

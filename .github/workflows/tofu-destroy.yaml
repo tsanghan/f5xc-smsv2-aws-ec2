@@ -36,7 +36,7 @@ jobs:
 
     - uses: opentofu/setup-opentofu@v2
       with:
-        tofu_version: 1.12.5
+        tofu_version: ${{ vars.OPENTOFU_VER }}
 
     - name: Tofu Init
       id: init
