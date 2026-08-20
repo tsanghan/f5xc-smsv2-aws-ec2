@@ -76,4 +76,11 @@ gh-set-secreats:
 gh-pr message:
     #!/usr/bin/env bash
     gh pr create --base main --head test --title "{{message}}" --body "{{message}}"
+    gh pr merge $(gh pr list --json number | jq -Mr '.[0].number') -m
+
+git-sync:
+    #!/usr/bin/env bash
+    git checkout main
+    git pull
+    git checkout test
 
