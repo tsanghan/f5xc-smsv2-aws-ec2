@@ -66,7 +66,7 @@ jobs:
 
     - name: Tofu Plan
       id: plab
-      run: tofu plan
+      run: tofu plan -out="tfplan"
       continue-on-error: true
 
     - name: Tofu Plan Status
@@ -74,4 +74,4 @@ jobs:
       run: exit 1
 
     - name: Tofu Apply
-      run: tofu apply -auto-approve
+      run: tofu apply "tfplan"
