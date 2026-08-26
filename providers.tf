@@ -33,7 +33,7 @@ terraform {
 
 provider "volterra" {
   timeout = "90s"
-  url     = "https://training.console.ves.volterra.io/api"
+  url     = "https://training1.console.ves.volterra.io/api"
 }
 
 provider "aws" {
