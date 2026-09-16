@@ -1,47 +1,48 @@
-##########################################
-#  _____ ______  ______
-# |  ___| ___\ \/ / ___|
-# | |_  |___ \\  / |
-# |  _|  ___) /  \ |___
-# |_|   |____/_/\_\____|
-#
-##########################################
+# ##########################################
+# #  _____ ______  ______
+# # |  ___| ___\ \/ / ___|
+# # | |_  |___ \\  / |
+# # |  _|  ___) /  \ |___
+# # |_|   |____/_/\_\____|
+# #
+# ##########################################
 
-resource "f5xc_securemesh_site_v2" "this" {
-  name      = "${local.student_name}-smsv2"
-  namespace = "system"
-  labels = merge(
-    local.common_tags,
-    {
-      "${local.student_name}-key" = "${local.student_name}-value"
-    }
-  )
+# resource "f5xc_securemesh_site_v2" "this" {
+#   name      = "${local.student_name}-smsv2"
+#   namespace = "system"
+#   labels = merge(
+#     local.common_tags,
+#     {
+#       "${local.student_name}-key" = "${local.student_name}-value"
+#     }
+#   )
 
-  blocked_services_choice = {
-    block_all_services = true
-  }
+#   blocked_services_choice = {
+#     block_all_services = true
+#   }
 
-  provider_choice = {
-    aws = {
-      orchestration_choice = {
-        not_managed = {}
-      }
-    }
-  }
+#   provider_choice = {
+#     aws = {
+#       orchestration_choice = {
+#         not_managed = {}
+#       }
+#     }
+#   }
 
-  logs_receiver_choice = {
-    logs_streaming_disabled = true
-  }
+#   logs_receiver_choice = {
+#     logs_streaming_disabled = true
+#   }
 
-  lifecycle {
-    ignore_changes = [labels]
-  }
-}
+#   lifecycle {
+#     ignore_changes = [labels]
+#   }
+# }
 
-resource "time_sleep" "wait" {
-  create_duration  = "5s"
-  destroy_duration = "5s"
+# resource "time_sleep" "wait" {
+#   create_duration  = "5s"
+#   destroy_duration = "5s"
 
+<<<<<<< HEAD
   depends_on = [f5xc_securemesh_site_v2.this]
 }
 
@@ -53,6 +54,19 @@ resource "f5xc_token" "this" {
 
   depends_on = [f5xc_securemesh_site_v2.this, time_sleep.wait]
 }
+=======
+#   depends_on = [f5xc_securemesh_site_v2.this]
+# }
+
+# resource "f5xc_token" "this" {
+#   name      = "${local.student_name}-smsv2"
+#   namespace = "system"
+#   type      = ["JWT"]
+#   site_name = "${local.student_name}-smsv2"
+
+#   # depends_on = [f5xc_securemesh_site_v2.this, time_sleep.wait]
+# }
+>>>>>>> c19f341 (added op with vk8s services)
 
 # #########################################
 #             _                      _
@@ -189,26 +203,26 @@ resource "aws_eip" "this" {
   depends_on = [aws_instance.this]
 }
 
-# ##########################################
-# #  _           _
-# # (_)_ __  ___| |_ __ _ _ __   ___ ___
-# # | | '_ \/ __| __/ _` | '_ \ / __/ _ \
-# # | | | | \__ \ || (_| | | | | (_|  __/
-# # |_|_| |_|___/\__\__,_|_| |_|\___\___|
-# #
-# ##########################################
+##########################################
+#  _           _
+# (_)_ __  ___| |_ __ _ _ __   ___ ___
+# | | '_ \/ __| __/ _` | '_ \ / __/ _ \
+# | | | | \__ \ || (_| | | | | (_|  __/
+# |_|_| |_|___/\__\__,_|_| |_|\___\___|
 #
-# ##################################################################################
-# # DATA
-# ##################################################################################
+##########################################
+
+##################################################################################
+# DATA
+##################################################################################
 
 data "aws_ssm_parameter" "ami" {
   name = "/aws/service/marketplace/prod-wrwzhcymymama/latest"
 }
 
-# ##################################################################################
-# # RESOURCES
-# ##################################################################################
+##################################################################################
+# RESOURCES
+##################################################################################
 
 resource "aws_key_pair" "this" {
   key_name   = var.key_name
@@ -217,7 +231,7 @@ resource "aws_key_pair" "this" {
   tags = local.common_tags
 }
 
-# # # INSTANCES #
+# INSTANCES #
 resource "aws_instance" "this" {
   ami           = nonsensitive(data.aws_ssm_parameter.ami.value)
   instance_type = local.instance_type

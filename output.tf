@@ -6,6 +6,7 @@
 #  \___/ \__,_|\__| .__/ \__,_|\__|
 #                 |_|
 ##########################################
-output "f5xc_token" {
-    value = f5xc_token.this
-}
+
+# output "f5xc_token" {
+#   value = f5xc_token.this
+# }
