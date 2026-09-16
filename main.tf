@@ -42,19 +42,6 @@
 #   create_duration  = "5s"
 #   destroy_duration = "5s"
 
-<<<<<<< HEAD
-  depends_on = [f5xc_securemesh_site_v2.this]
-}
-
-resource "f5xc_token" "this" {
-  name      = "${local.student_name}-smsv2"
-  namespace = "system"
-  type      = ["JWT"]
-  site_name = "${local.student_name}-smsv2"
-
-  depends_on = [f5xc_securemesh_site_v2.this, time_sleep.wait]
-}
-=======
 #   depends_on = [f5xc_securemesh_site_v2.this]
 # }
 
@@ -64,9 +51,8 @@ resource "f5xc_token" "this" {
 #   type      = ["JWT"]
 #   site_name = "${local.student_name}-smsv2"
 
-#   # depends_on = [f5xc_securemesh_site_v2.this, time_sleep.wait]
+#   depends_on = [f5xc_securemesh_site_v2.this]
 # }
->>>>>>> c19f341 (added op with vk8s services)
 
 # #########################################
 #             _                      _
