@@ -265,69 +265,69 @@ resource "f5xc_http_loadbalancer" "this" {
 #
 ##########################################
 
-# resource "f5xc_origin_pool" "this" {
-#   name                   = local.pool_info["name"]
-#   namespace              = local.pool_info["namespace"]
-#   description            = local.pool_info["description"]
-#   loadbalancer_algorithm = local.pool_info["loadbalancer_algorithm"]
-#   endpoint_selection     = local.pool_info["endpoint_selection"]
+resource "f5xc_origin_pool" "this" {
+  name                   = local.pool_info["name"]
+  namespace              = local.pool_info["namespace"]
+  description            = local.pool_info["description"]
+  loadbalancer_algorithm = local.pool_info["loadbalancer_algorithm"]
+  endpoint_selection     = local.pool_info["endpoint_selection"]
 
-#   labels = {
-#     "${local.student_name}-key" = "${local.student_name}-value"
-#   }
+  labels = {
+    "${local.student_name}-key" = "${local.student_name}-value"
+  }
 
-#   annotations = {
-#     owner = local.student_name
-#   }
+  annotations = {
+    owner = local.student_name
+  }
 
-#   port_choice = {
-#     port = local.pool_info["port"]
-#   }
+  port_choice = {
+    port = local.pool_info["port"]
+  }
 
-#   tls_choice = {
-#     no_tls = true
-#   }
+  tls_choice = {
+    no_tls = true
+  }
 
-#   upstream_conn_pool_reuse_type = {
-#     map_downstream_to_upstream_conn_pool_type_choice = {
-#       disable_conn_pool_reuse = true
-#     }
-#   }
+  upstream_conn_pool_reuse_type = {
+    map_downstream_to_upstream_conn_pool_type_choice = {
+      disable_conn_pool_reuse = true
+    }
+  }
 
-#   origin_servers = [
-#     {
-#       choice = {
-#         k8s_service = {
-#           network_choice = {
-#             vk8s_networks = true
-#           }
-#           service_info_choice = {
-#             service_name = "${local.vk8s_info["vk8s_service_name"]}"
-#           }
-#           site_locator = {
-#             choice = {
-#               virtual_site = {
-#                 name      = local.vsite_info["name"]
-#                 namespace = local.student_name
-#               }
-#             }
-#           }
-#         }
-#       }
-#     }
-#   ]
+  origin_servers = [
+    {
+      choice = {
+        k8s_service = {
+          network_choice = {
+            vk8s_networks = true
+          }
+          service_info_choice = {
+            service_name = "${local.vk8s_info["vk8s_service_name"]}"
+          }
+          site_locator = {
+            choice = {
+              virtual_site = {
+                name      = local.vsite_info["name"]
+                namespace = local.student_name
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 
-#   healthcheck = [
-#     {
-#       name      = f5xc_healthcheck.this.name
-#       namespace = local.hc_info["namespace"]
-#     }
-#   ]
+  healthcheck = [
+    {
+      name      = f5xc_healthcheck.this.name
+      namespace = local.hc_info["namespace"]
+    }
+  ]
 
-#   lifecycle {
-#     ignore_changes = [labels]
-#   }
-# }
+  lifecycle {
+    ignore_changes = [labels]
+  }
+}
 
 ##########################################
 #  _   _  ____
