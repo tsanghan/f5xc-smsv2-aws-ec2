@@ -9,7 +9,7 @@ variable "student_no" {
 
 variable "region" {
   type    = string
-  default = "us-east-1"
+  default = "ap-southeast-1"
 }
 
 variable "public_key" {
@@ -29,4 +29,9 @@ variable "extra_cidrs" {
 variable "in_github_action" {
   type    = bool
   default = false
+}
+
+variable "f5xc_api_token" {
+  type    = string
+  default = null
 }

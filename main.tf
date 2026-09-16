@@ -7,7 +7,7 @@
 #
 ##########################################
 
-resource "volterra_securemesh_site_v2" "this" {
+resource "f5xc_securemesh_site_v2" "this" {
   name      = "${local.student_name}-smsv2"
   namespace = "system"
   labels = merge(
@@ -17,17 +17,20 @@ resource "volterra_securemesh_site_v2" "this" {
     }
   )
 
-  blocked_services {
-    blocked_sevice {
-      web_user_interface = true
-      network_type       = "network_type"
+  blocked_services_choice = {
+    block_all_services = true
+  }
+
+  provider_choice = {
+    aws = {
+      orchestration_choice = {
+        not_managed = {}
+      }
     }
   }
 
-  logs_streaming_disabled = true
-
-  aws {
-    not_managed {}
+  logs_receiver_choice = {
+    logs_streaming_disabled = true
   }
 
   lifecycle {
@@ -39,16 +42,16 @@ resource "time_sleep" "wait" {
   create_duration  = "5s"
   destroy_duration = "5s"
 
-  depends_on = [volterra_securemesh_site_v2.this]
+  depends_on = [f5xc_securemesh_site_v2.this]
 }
 
-resource "volterra_token" "token" {
+resource "f5xc_token" "this" {
   name      = "${local.student_name}-smsv2"
   namespace = "system"
-  type      = 1
+  type      = ["JWT"]
   site_name = "${local.student_name}-smsv2"
 
-  depends_on = [volterra_securemesh_site_v2.this, time_sleep.wait]
+  depends_on = [f5xc_securemesh_site_v2.this, time_sleep.wait]
 }
 
 # #########################################
@@ -235,7 +238,7 @@ resource "aws_instance" "this" {
     local.common_tags,
     {
       Name             = "${local.course_name}-${local.student_name}-ec2",
-      ves-io-site-name = volterra_securemesh_site_v2.this.name
+      ves-io-site-name = f5xc_securemesh_site_v2.this.name
     }
   )
 }

@@ -4,6 +4,8 @@
 
 locals {
 
+  f5xc_api_token = var.f5xc_api_token
+
   student_name = "student${var.student_no}"
 
   region = var.region

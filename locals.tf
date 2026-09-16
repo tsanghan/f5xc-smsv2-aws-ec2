@@ -4,6 +4,8 @@
 
 locals {
 
+  f5xc_api_token = var.f5xc_api_token
+
   student_name = "student${var.student_no}"
 
   region = var.region
@@ -28,7 +30,7 @@ locals {
 
   templatefile = "templates/cloud-config.tmpl"
 
-  template_var = { token = volterra_token.token.id }
+  template_var = { token = f5xc_token.this.content }
 
   common_tags = {
     Class      = "F5XC-Admin-smsv2"

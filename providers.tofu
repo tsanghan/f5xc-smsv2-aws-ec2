@@ -6,11 +6,15 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 6.60.0, < 7.0.0"
+      version = ">= 6.61.0, < 7.0.0"
     }
-    volterra = {
-      source  = "volterraedge/volterra"
-      version = ">= 0.12.2, < 1.0.0"
+    # volterra = {
+    #   source  = "volterraedge/volterra"
+    #   version = ">= 0.12.2, < 1.0.0"
+    # }
+    f5xc = {
+      source  = "F5Networks/f5xc"
+      version = ">=0.9.5, < 1.0.0"
     }
     http = {
       source  = "hashicorp/http"
@@ -31,9 +35,15 @@ terraform {
   }
 }
 
-provider "volterra" {
-  timeout = "90s"
-  url     = "https://training1.console.ves.volterra.io/api"
+# provider "volterra" {
+#   timeout = "90s"
+#   url     = "https://training.console.ves.volterra.io/api"
+# }
+
+provider "f5xc" {
+  api_token = local.f5xc_api_token
+  url = "https://training-dev.console.ves.volterra.io/api"
+  throttling = {}
 }
 
 provider "aws" {
